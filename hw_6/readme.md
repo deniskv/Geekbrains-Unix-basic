@@ -20,8 +20,11 @@
 GCP по-умолчанию блокирует трафик из-вне. Мы можем разраешить доступ по http/https в рамках создания ВМ. Но как альтернатива, можно использовать *ufw*
 
 >sudo ufw enable
+
 >sudo ufw default deny incoming
+
 >sudo ufw allow from any to any port 22,80,443 proto tcp
+
 >sudo ufw status verbose
 
 Пояснение: запускаем фаервол, далее блокируем весь входящий трафик, 
