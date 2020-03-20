@@ -82,3 +82,55 @@ location / {
 
 
 **Настроить Nignx + ssl с использованием cert-manager (материал в доп ссылке в комментариях)**
+
+Установим certbot:
+
+```
+sudo apt-get update
+sudo apt-get install software-properties-common
+sudo add-apt-repository universe
+sudo add-apt-repository ppa:certbot/certbot
+sudo apt-get update
+sudo apt-get install certbot python-certbot-nginx
+```
+В автоматическом режиме добавим сертификат и сконфигурируем nginx
+
+>sudo certbot --nginx
+
+Если консервативных взглядов или в конфиге имеется много кастомной настройки и есть риск, что все поломается или не будет работать так, как планировалос, тогда лучше:
+
+>sudo certbot certonly --nginx
+
+В ответе мы получаем список:
+
+```
+`privkey.pem`  : the private key for your certificate.
+`fullchain.pem`: the certificate file used in most server software.
+`chain.pem`    : used for OCSP stapling in Nginx >=1.3.7.
+`cert.pem`     : will break many server configurations, and should not be used
+                 without reading further documentation (see link below).
+```
+
+далее, в конфиге nginx добавим: 
+```
+server {
+    listen 80;
+  server_name #доменное имя здесб
+  return 301 https://$server_name$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  server_name #доменное имя здесь
+
+  ssl on;
+  ssl_certificate /etc/nginx/ssl/canbyedfoundation_org-bundle.crt;
+  ssl_certificate_key /etc/nginx/ssl/canbyedfoundation.org.key;
+    .....
+}
+
+```
+
+Установим периодическое обновление сертификата
+
+>sudo certbot renew --dry-run
